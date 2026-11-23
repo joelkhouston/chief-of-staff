@@ -1,0 +1,23 @@
+name: Deploy Google Apps Script
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'gas/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install -g @google/clasp
+      - name: Restore clasp credentials
+        run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+      - name: Push and update live Web App version
+        working-directory: ./gas
+        run: |
+          clasp push -f
+          clasp deploy -i AKfycbxhu7YCeaeMi-1IDWYgD4_XdCSWBIVsp6baTF777xYutHwBQPkPtrkMoEpGOZKAapo4Cw -d "GitHub auto-deploy"

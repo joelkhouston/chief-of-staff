@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chief of Staff</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 18px 16px 40px;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .container { max-width: 780px; margin: 0 auto; }
+
+    /* Top Header & Tab Bar */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #21262d;
+    }
+    h1 { font-size: 18px; margin: 0; color: #79c0ff; letter-spacing: 0.2px; }
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      background: #161b22;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid #30363d;
+    }
+    .tab-btn {
+      background: transparent;
+      color: #8b949e;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tab-btn:hover { color: #e6edf3; }
+    .tab-btn.active {
+      background: #21262d;
+      color: #e6edf3;
+      box-shadow: 0 1px 3px #00000044;
+    }
+    .tab-badge {
+      display: inline-block;
+      margin-left: 5px;
+      padding: 1px 6px;
+      font-size: 10.5px;
+      border-radius: 10px;
+      background: #1f6feb33;
+      color: #79c0ff;
+    }
+
+    /* Buttons & Inputs */
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: #0d1117;
+      color: #e6edf3;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 9px 11px;
+      font-size: 13.5px;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #58a6ff; }
+
+    button {
+      background: #238636;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12.5px;
+      touch-action: manipulation;
+      white-space: nowrap;
+    }
+    button:hover:not(:disabled) { filter: brightness(1.08); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.hero-btn {
+      background: linear-gradient(135deg, #1f6feb, #2ea043);
+      font-size: 13.5px;
+      padding: 10px 16px;
+      box-shadow: 0 2px 12px #1f6feb33;
+    }
+    button.secondary { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; }
+    button.plan-fill { background: #1f6feb26; border: 1px solid #388bfd55; color: #79c0ff; }
+    button.danger { background: #da363326; border: 1px solid #f8514955; color: #ff7b72; }
+    button.mini { padding: 4px 9px; font-size: 11.5px; border-radius: 6px; }
+    button.xs { padding: 3px 7px; font-size: 11px; border-radius: 5px; }
+
+    /* Cards & Sections */
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 15px 16px;
+      margin-bottom: 14px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8b949e;
+    }
+
+    /* Capture Bar */
+    .capture-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .capture-row input { flex: 1; min-width: 220px; }
+
+    /* Focus Now Option Cards */
+    .focus-option {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 12px 13px;
+      margin-top: 9px;
+    }
+    .focus-option.top-pick { border-color: #2ea04388; }
+    .focus-option-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .rank-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: #238636;
+      color: #fff;
+      margin-right: 6px;
+    }
+    .rank-badge.alt { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+
+    /* Clean Task Rows (Shared across Running List & Projects) */
+    .task-row {
+      padding: 8px 0;
+      border-top: 1px solid #21262d;
+    }
+    .task-row:first-child { border-top: none; padding-top: 2px; }
+    .task-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .chk-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      cursor: pointer;
+      flex: 1;
+      color: #e6edf3;
+      font-size: 13.5px;
+    }
+    .chk-label input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: #238636;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .cat-pill {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 5px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      margin-right: 6px;
+    }
+    .cat-pill.Spanish { background: #9e6a032b; border-color: #d2992266; color: #e3b341; }
+    .sched-pill {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: 10px;
+      background: #1f6feb26;
+      border: 1px solid #388bfd55;
+      color: #79c0ff;
+      margin-left: 6px;
+    }
+
+    /* Inline 3-Slot Approval Drawer */
+    .slot-drawer {
+      margin: 8px 0 2px 24px;
+      padding: 9px 11px;
+      background: #0d1117;
+      border: 1px solid #388bfd66;
+      border-radius: 8px;
+    }
+    .slot-choice {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-top: 1px solid #21262d;
+      font-size: 12.5px;
+    }
+    .slot-choice:first-of-type { border-top: none; }
+
+    /* Gmail & Calendar Items */
+    .gmail-item {
+      padding: 11px 0;
+      border-top: 1px solid #21262d;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .gmail-item:first-child { border-top: none; padding-top: 2px; }
+    .agenda-item {
+      padding: 8px 0;
+      border-top: 1px solid #21262d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .agenda-item:first-child { border-top: none; }
+    .agenda-item.past { opacity: 0.45; }
+    .agenda-day-header {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 12px 0 4px;
+      padding-bottom: 3px;
+      border-bottom: 1px solid #21262d;
+    }
+
+    .meta-text { font-size: 11.5px; color: #8b949e; }
+    .status-msg { margin-top: 8px; font-size: 12px; color: #3fb950; }
+    .error-msg { margin-top: 8px; font-size: 12px; color: #ff7b72; }
+    .dump-log { margin: 6px 0 0 18px; padding: 0; font-size: 12px; color: #aff5b4; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Chief of Staff</h1>
+      <nav class="nav-tabs">
+        <button class="tab-btn active" id="tabBtnFocus" onclick="switchTab('focus')">Focus Now</button>
+        <button class="tab-btn" id="tabBtnProjects" onclick="switchTab('projects')">Projects<span id="badgeProjects" class="tab-badge">0</span></button>
+        <button class="tab-btn" id="tabBtnInbox" onclick="switchTab('inbox')">Inbox<span id="badgeInbox" class="tab-badge" style="display:none;">0</span></button>
+        <button class="tab-btn" id="tabBtnCalendar" onclick="switchTab('calendar')">Calendar</button>
+      </nav>
+    </header>
+
+    <!-- ==================== TAB 1: FOCUS NOW (DEFAULT CALM VIEW) ==================== -->
+    <div id="viewFocus">
+    <!-- Single-Line Capture + What Do I Do Now? -->
+   <div class="card">
+     <div class="capture-row" style="gap:6px;">
+       <input type="text" id="captureInput" style="flex-basis:100%;" placeholder="Quick task or morning brain dump...">
+       <button id="btnQuickAdd" style="padding:9px 11px; font-size:12px;" onclick="handleCaptureSubmit(false)" title="Add directly to Running To-Do List">+ Add</button>
+       <button id="btnSortDump" class="secondary" style="padding:9px 11px; font-size:12px;" onclick="handleCaptureSubmit(true)" title="AI-sort into Projects & Running List">Sort Dump</button>
+       <button id="btnWhatNow" class="hero-btn" style="padding:9px 12px; font-size:12px; flex:1;" onclick="runWhatDoIDoNow()">What Do I Do Now?</button>
+     </div>
+     <div id="captureFeedback"></div>
+     <ul id="dumpLogList" class="dump-log" style="display:none;"></ul>
+   </div>
+
+      <!-- What to Focus On Now (Live Window Options) -->
+      <div class="card" id="focusNowCard">
+        <div class="section-header">
+          <span class="section-title" id="focusNowTitle">What to Focus On Now</span>
+          <button class="plan-fill mini" onclick="runWhatDoIDoNow()">Refresh Window</button>
+        </div>
+        <div id="focusNowBanner" class="meta-text" style="font-size:13px; color:#c9d1d9;">
+          Click <strong>What Do I Do Now?</strong> to check your live calendar window (with a 10-minute brain break) and see your top priorities that fit right now.
+        </div>
+        <div id="focusNowAdvice" class="meta-text" style="margin-top:4px;"></div>
+        <div id="focusNowOptions"></div>
+        <div id="focusNowStatus"></div>
+      </div>
+
+      <!-- Running To-Do List -->
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Running To-Do List</span>
+          <span class="meta-text">10m buffer • 7:00 PM cutoff</span>
+        </div>
+        <div id="runningTodoList" class="meta-text">Loading tasks...</div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 2: PROJECTS ==================== -->
+    <div id="viewProjects" style="display:none;">
+      <div class="section-header" style="margin-bottom:12px;">
+        <span class="section-title">Projects &amp; Breakdown Guides</span>
+        <div style="display:flex; gap:6px;">
+          <button class="plan-fill mini" onclick="toggleNewProjectForm()">+ New Project</button>
+          <button class="danger mini" onclick="confirmStartOver()">Archive All</button>
+        </div>
+      </div>
+
+      <!-- New Project Form -->
+      <div id="newProjectForm" class="card" style="display:none;">
+        <div class="section-header">
+          <span class="section-title">Create Project</span>
+          <button class="secondary mini" onclick="toggleNewProjectForm()">Close</button>
+        </div>
+        <div class="two-col" style="margin-bottom:8px;">
+          <input type="text" id="newCardName" placeholder="Project title (e.g., 5-Day Video Sprint)">
+          <select id="newCardTier">
+            <option value="Tier 1B - Consulting/PD" selected>Tier 1B - Consulting/PD</option>
+            <option value="Tier 1A - Teaching">Tier 1A - Teaching</option>
+            <option value="Tier 2 - AI Policy">Tier 2 - AI Policy</option>
+            <option value="Personal / Spanish & Ops">Personal / Spanish &amp; Ops</option>
+            <option value="Tier 4 - Sandbox/Icebox">Tier 4 - Sandbox/Icebox</option>
+          </select>
+        </div>
+        <textarea id="newCardDesc" rows="2" placeholder="Description & Breakdown Guide (tell the AI how bigger tasks split into 15m increments)..." style="margin-bottom:8px;"></textarea>
+        <textarea id="newCardSteps" rows="3" placeholder="Optional starter 15m steps (one per line)..." style="margin-bottom:8px;"></textarea>
+        <div style="display:flex; gap:8px;">
+          <button id="btnSaveManualCard" style="flex:1;" onclick="submitManualNewCard()">Save Project</button>
+          <button id="btnAutoBuildCard" class="plan-fill" onclick="submitAutoBuildCard()">Auto-Generate Steps from Description</button>
+        </div>
+      </div>
+
+      <div id="projectCardsContainer" class="meta-text">Loading projects...</div>
+    </div>
+
+    <!-- ==================== TAB 3: INBOX (TAGGED WITH ChiefOfStaff) ==================== -->
+    <div id="viewInbox" style="display:none;">
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Inbox Triage</span>
+          <div style="display:flex; gap:6px;">
+            <button id="btnTagAll" class="secondary mini" style="display:none;" onclick="tagAllRemaining()">Tag All Handled</button>
+            <button id="btnScanGmail" class="plan-fill mini" onclick="scanGmail(false)">Rescan Inbox</button>
+          </div>
+        </div>
+        <div style="margin-bottom:8px;">
+          <input type="text" id="gmailQueryInput" placeholder="Optional Gmail filter (default: untriaged Primary & Important)..." style="padding:6px 9px; font-size:12px;">
+        </div>
+        <div id="gmailStatus" class="meta-text">Scanning inbox...</div>
+        <div id="gmailResultsList" style="margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: CALENDAR ==================== -->
+    <div id="viewCalendar" style="display:none;">
+      <div id="suggestCard" class="card" style="display:none; border-color:#388bfd88;">
+        <div class="section-header">
+          <span class="section-title">Options for Selected Plan Period</span>
+          <button class="secondary mini" onclick="document.getElementById('suggestCard').style.display='none'">Close</button>
+        </div>
+        <div id="suggestWindowLabel" style="font-size:13px; color:#58a6ff; font-weight:600;"></div>
+        <div id="suggestAdviceText" class="meta-text" style="margin:4px 0 8px;"></div>
+        <div id="suggestOptionsList"></div>
+        <div id="suggestCommitStatus"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Calendar (Next 3 Days)</span>
+          <button class="secondary mini" onclick="loadAgenda()">Sync Cal</button>
+        </div>
+        <div id="agendaStatus" class="status-msg" style="margin:0 0 6px;"></div>
+        <div id="agendaList" class="meta-text">Loading calendar events...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allCardsCache = [];
+    let runningTodosCache = [];
+
+    loadDashboard();
+    loadAgenda();
+
+    function switchTab(tabName) {
+      const map = {
+        focus: ['viewFocus', 'tabBtnFocus'],
+        projects: ['viewProjects', 'tabBtnProjects'],
+        inbox: ['viewInbox', 'tabBtnInbox'],
+        calendar: ['viewCalendar', 'tabBtnCalendar']
+      };
+      Object.keys(map).forEach(k => {
+        document.getElementById(map[k][0]).style.display = k === tabName ? 'block' : 'none';
+        document.getElementById(map[k][1]).classList.toggle('active', k === tabName);
+      });
+    }
+
+    function loadDashboard() {
+      google.script.run
+        .withSuccessHandler(data => {
+          allCardsCache = (data && data.cards) || [];
+          runningTodosCache = (data && data.runningTodos) || [];
+          updateProjectBadge();
+          renderRunningTodos(runningTodosCache);
+          renderProjectCards(allCardsCache);
+          scanGmail(true); // Background inbox check on open
+        })
+        .withFailureHandler(err => {
+          document.getElementById('runningTodoList').innerHTML = `<div class="error-msg">${err.message}</div>`;
+        })
+        .getInitialDashboardData();
+    }
+
+    function updateProjectBadge() {
+      document.getElementById('badgeProjects').textContent = allCardsCache.length;
+    }
+
+    function updateInboxBadge(count) {
+      const badge = document.getElementById('badgeInbox');
+      if (count > 0) {
+        badge.style.display = 'inline-block';
+        badge.textContent = count;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    /* ================= SINGLE-LINE CAPTURE & MORNING BRAIN DUMP ================= */
+    document.getElementById('captureInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (!val) return;
+        // Multi-line or multi-clause brain dump routes via AI; single quick task adds immediately
+        const looksLikeDump = val.includes('\n') || (val.match(/,/g) || []).length >= 2;
+        handleCaptureSubmit(looksLikeDump);
+      }
+    });
+
+function handleCaptureSubmit(useAiDump) {
+   const inputEl = document.getElementById('captureInput');
+   const addBtn = document.getElementById('btnQuickAdd');
+   const sortBtn = document.getElementById('btnSortDump');
+   const text = inputEl.value.trim();
+   const fb = document.getElementById('captureFeedback');
+   const logUl = document.getElementById('dumpLogList');
+   if (!text) return;
+
+   logUl.style.display = 'none';
+   logUl.innerHTML = '';
+
+   if (!useAiDump) {
+     inputEl.disabled = true;
+     if (addBtn) addBtn.disabled = true;
+     if (sortBtn) sortBtn.disabled = true;
+     fb.className = 'status-msg';
+     fb.textContent = 'Adding to Running To-Do List...';
+     google.script.run
+       .withSuccessHandler(todos => {
+         inputEl.disabled = false;
+         if (addBtn) addBtn.disabled = false;
+         if (sortBtn) sortBtn.disabled = false;
+         inputEl.value = '';
+         runningTodosCache = todos || [];
+         renderRunningTodos(runningTodosCache);
+         fb.textContent = 'Added!';
+         setTimeout(() => { fb.textContent = ''; }, 2000);
+       })
+       .withFailureHandler(err => {
+         inputEl.disabled = false;
+         if (addBtn) addBtn.disabled = false;
+         if (sortBtn) sortBtn.disabled = false;
+         fb.className = 'error-msg';
+         fb.textContent = err.message;
+       })
+       .addRunningTodo(text, '', 15, /\bspanish\b/i.test(text));
+     return;
+   }
+
+   inputEl.disabled = true;
+   if (addBtn) addBtn.disabled = true;
+   if (sortBtn) sortBtn.disabled = true;
+   fb.className = 'status-msg';
+   fb.textContent = 'Sorting into Projects & Running To-Do List...';
+
+   google.script.run
+     .withSuccessHandler(res => {
+       inputEl.disabled = false;
+       if (addBtn) addBtn.disabled = false;
+       if (sortBtn) sortBtn.disabled = false;
+       inputEl.value = '';
+
+       allCardsCache = res.cards || [];
+       runningTodosCache = res.runningTodos || [];
+       updateProjectBadge();
+       renderRunningTodos(runningTodosCache);
+       renderProjectCards(allCardsCache);
+
+       fb.className = 'status-msg';
+       fb.textContent = res.summary || 'Sorted!';
+       if (res.logLines && res.logLines.length > 0) {
+         logUl.style.display = 'block';
+         res.logLines.forEach(line => {
+           const li = document.createElement('li');
+           li.textContent = line;
+           logUl.appendChild(li);
+         });
+       }
+     })
+     .withFailureHandler(err => {
+       inputEl.disabled = false;
+       if (addBtn) addBtn.disabled = false;
+       if (sortBtn) sortBtn.disabled = false;
+       fb.className = 'error-msg';
+       fb.textContent = err.message;
+     })
+     .processMorningBrainDump(text);
+ }
+
+    /* ================= UNIVERSAL INLINE 3-SLOT SCHEDULER ================= */
+    function openInlineScheduler(hostContainer, title, durationMin, sourceType, parentId, itemId) {
+      const existing = hostContainer.querySelector('.slot-drawer');
+      if (existing) {
+        existing.remove();
+        return;
+      }
+
+      const drawer = document.createElement('div');
+      drawer.className = 'slot-drawer';
+      drawer.innerHTML = '<div class="meta-text">Finding 3 open slots (with 10m brain break)...</div>';
+      hostContainer.appendChild(drawer);
+
+      google.script.run
+        .withSuccessHandler(res => {
+          drawer.innerHTML = '';
+          const header = document.createElement('div');
+          header.style.display = 'flex';
+          header.style.justifyContent = 'space-between';
+          header.style.alignItems = 'center';
+          header.style.marginBottom = '4px';
+
+          const hText = document.createElement('span');
+          hText.className = 'meta-text';
+          hText.style.color = '#79c0ff';
+          hText.style.fontWeight = '600';
+          hText.textContent = 'Select a time slot to approve:';
+
+          const closeBtn = document.createElement('button');
+          closeBtn.className = 'secondary xs';
+          closeBtn.textContent = 'Cancel';
+          closeBtn.onclick = () => drawer.remove();
+
+          header.appendChild(hText);
+          header.appendChild(closeBtn);
+          drawer.appendChild(header);
+
+          (res.slots || []).forEach(slot => {
+            const row = document.createElement('div');
+            row.className = 'slot-choice';
+
+            const info = document.createElement('div');
+            const l1 = document.createElement('div');
+            l1.style.fontWeight = '600';
+            l1.style.color = '#e6edf3';
+            l1.textContent = `${slot.label} (${slot.durationMin}m)`;
+
+            const l2 = document.createElement('div');
+            l2.className = 'meta-text';
+            l2.textContent = slot.sublabel;
+
+            info.appendChild(l1);
+            info.appendChild(l2);
+
+            const approveBtn = document.createElement('button');
+            approveBtn.className = 'mini';
+            approveBtn.textContent = 'Approve';
+            approveBtn.onclick = () => {
+              approveBtn.disabled = true;
+              approveBtn.textContent = 'Booking...';
+              google.script.run
+                .withSuccessHandler(bookRes => {
+                  drawer.remove();
+                  if (bookRes && bookRes.dashboard) {
+                    allCardsCache = bookRes.dashboard.cards || allCardsCache;
+                    runningTodosCache = bookRes.dashboard.runningTodos || runningTodosCache;
+                    updateProjectBadge();
+                    renderRunningTodos(runningTodosCache);
+                    renderProjectCards(allCardsCache);
+                  }
+                  loadAgenda();
+                })
+                .withFailureHandler(err => {
+                  approveBtn.disabled = false;
+                  approveBtn.textContent = 'Approve';
+                  alert(err.message);
+                })
+                .approveScheduledSlot({
+                  title: res.title,
+                  dateStr: slot.dateStr,
+                  startTime24: slot.startTime24,
+                  durationMin: slot.durationMin,
+                  shortBadge: slot.shortBadge,
+                  sourceType: res.sourceType,
+                  parentId: res.parentId,
+                  itemId: res.itemId
+                });
+            };
+
+            row.appendChild(info);
+            row.appendChild(approveBtn);
+            drawer.appendChild(row);
+          });
+        })
+        .withFailureHandler(err => {
+          drawer.innerHTML = `<div class="error-msg" style="margin:0;">${err.message}</div>`;
+        })
+        .findScheduleSlotsForTask(title, durationMin, sourceType, parentId, itemId);
+    }
+
+    /* ================= "WHAT DO I DO NOW?" DISPATCHER ================= */
+    function runWhatDoIDoNow() {
+      const btn = document.getElementById('btnWhatNow');
+      const banner = document.getElementById('focusNowBanner');
+      const advice = document.getElementById('focusNowAdvice');
+      const list = document.getElementById('focusNowOptions');
+      const statusEl = document.getElementById('focusNowStatus');
+
+      btn.disabled = true;
+      btn.textContent = 'Checking Window...';
+      banner.style.color = '#79c0ff';
+      banner.textContent = 'Checking live clock, calendar, and 10-minute brain-break buffer...';
+      advice.textContent = '';
+      list.innerHTML = '';
+      statusEl.textContent = '';
+
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.disabled = false;
+          btn.textContent = 'What Do I Do Now?';
+
+          document.getElementById('focusNowTitle').textContent = res.isWeekend
+            ? 'What to Focus On Now (Weekend 30–60m Blocks)'
+            : 'What to Focus On Now (School-Day 15m Bites)';
+          banner.style.color = '#79c0ff';
+          banner.style.fontWeight = '600';
+          banner.textContent = res.statusBanner;
+          advice.textContent = res.windowAdvice || '';
+
+          (res.options || []).forEach((opt, idx) => {
+            const card = document.createElement('div');
+            card.className = idx === 0 ? 'focus-option top-pick' : 'focus-option';
+
+            const top = document.createElement('div');
+            top.className = 'focus-option-top';
+
+            const info = document.createElement('div');
+            info.style.flex = '1';
+
+            const titleLine = document.createElement('div');
+            const badge = document.createElement('span');
+            badge.className = idx === 0 ? 'rank-badge' : 'rank-badge alt';
+            badge.textContent = idx === 0 ? 'TOP PRIORITY' : `#${opt.rank}`;
+
+            const cat = document.createElement('span');
+            cat.className = 'cat-pill';
+            cat.textContent = `${opt.categoryBadge} • ${opt.durationMin}m`;
+
+            const titleEl = document.createElement('strong');
+            titleEl.style.color = '#e6edf3';
+            titleEl.textContent = opt.title;
+
+            titleLine.appendChild(badge);
+            titleLine.appendChild(cat);
+            titleLine.appendChild(titleEl);
+
+            const reason = document.createElement('div');
+            reason.className = 'meta-text';
+            reason.style.marginTop = '4px';
+            reason.textContent = `${opt.priorityReason} • Start: ${opt.twoMinStart}`;
+
+            info.appendChild(titleLine);
+            info.appendChild(reason);
+
+            const actions = document.createElement('div');
+            actions.style.display = 'flex';
+            actions.style.gap = '5px';
+            actions.style.flexShrink = '0';
+
+            const doneBtn = document.createElement('button');
+            doneBtn.className = 'mini';
+            doneBtn.textContent = '☑ Done';
+            doneBtn.onclick = () => {
+              doneBtn.disabled = true;
+              doneBtn.textContent = '...';
+              google.script.run
+                .withSuccessHandler(fresh => {
+                  allCardsCache = fresh.cards || [];
+                  runningTodosCache = fresh.runningTodos || [];
+                  updateProjectBadge();
+                  renderRunningTodos(runningTodosCache);
+                  renderProjectCards(allCardsCache);
+                  card.remove();
+                  statusEl.className = 'status-msg';
+                  statusEl.textContent = `Completed & removed: "${opt.title}"`;
+                  setTimeout(() => { statusEl.textContent = ''; }, 3500);
+                })
+                .withFailureHandler(err => {
+                  doneBtn.disabled = false;
+                  doneBtn.textContent = '☑ Done';
+                  alert(err.message);
+                })
+                .completeRecommendedOption(opt.sourceType, opt.parentId, opt.itemId);
+            };
+
+            const schedBtn = document.createElement('button');
+            schedBtn.className = 'secondary mini';
+            schedBtn.textContent = 'Schedule';
+            schedBtn.onclick = () => openInlineScheduler(card, opt.title, opt.durationMin, opt.sourceType, opt.parentId, opt.itemId);
+
+            actions.appendChild(doneBtn);
+            actions.appendChild(schedBtn);
+            top.appendChild(info);
+            top.appendChild(actions);
+            card.appendChild(top);
+            list.appendChild(card);
+          });
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.textContent = 'What Do I Do Now?';
+          banner.style.color = '#ff7b72';
+          banner.textContent = err.message;
+        })
+        .whatDoIDoNow();
+    }
+
+    /* ================= RUNNING TO-DO LIST ================= */
+    function renderRunningTodos(todos) {
+      const container = document.getElementById('runningTodoList');
+      if (!todos || todos.length === 0) {
+        container.textContent = 'Running list clear. Type a task above to add one.';
+        return;
+      }
+
+      container.innerHTML = '';
+      todos.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'task-row';
+
+        const main = document.createElement('div');
+        main.className = 'task-main';
+
+        const label = document.createElement('label');
+        label.className = 'chk-label';
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.onchange = () => {
+          cb.disabled = true;
+          row.style.opacity = '0.45';
+          google.script.run
+            .withSuccessHandler(updated => {
+              runningTodosCache = updated || [];
+              renderRunningTodos(runningTodosCache);
+            })
+            .completeRunningTodo(t.todoId);
+        };
+
+        const textSpan = document.createElement('span');
+        const pill = document.createElement('span');
+        pill.className = 'cat-pill ' + (t.category || '').split('/')[0].trim();
+        pill.textContent = `${t.category} • ${t.estMin}m${t.isDailyHabit ? ' ↻' : ''}`;
+        textSpan.appendChild(pill);
+        textSpan.appendChild(document.createTextNode(t.text));
+
+        if (t.scheduledSlot) {
+          const sPill = document.createElement('span');
+          sPill.className = 'sched-pill';
+          sPill.textContent = `📅 ${t.scheduledSlot}`;
+          textSpan.appendChild(sPill);
+        }
+
+        label.appendChild(cb);
+        label.appendChild(textSpan);
+
+        const actions = document.createElement('div');
+        actions.style.display = 'flex';
+        actions.style.gap = '4px';
+        actions.style.flexShrink = '0';
+
+        const schedBtn = document.createElement('button');
+        schedBtn.className = 'secondary xs';
+        schedBtn.textContent = 'Schedule';
+        schedBtn.onclick = () => openInlineScheduler(row, t.text, t.estMin, 'RUNNING_TODO', '', t.todoId);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'secondary xs';
+        delBtn.textContent = '×';
+        delBtn.title = 'Delete item';
+        delBtn.onclick = () => {
+          delBtn.disabled = true;
+          google.script.run
+            .withSuccessHandler(updated => {
+              runningTodosCache = updated || [];
+              renderRunningTodos(runningTodosCache);
+            })
+            .deleteRunningTodo(t.todoId);
+        };
+
+        actions.appendChild(schedBtn);
+        actions.appendChild(delBtn);
+
+        main.appendChild(label);
+        main.appendChild(actions);
+        row.appendChild(main);
+        container.appendChild(row);
+      });
+    }
+
+    /* ================= PROJECTS TAB ================= */
+    function toggleNewProjectForm() {
+      const f = document.getElementById('newProjectForm');
+      f.style.display = f.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function submitManualNewCard() {
+      const name = document.getElementById('newCardName').value.trim();
+      if (!name) return;
+      const btn = document.getElementById('btnSaveManualCard');
+      btn.disabled = true;
+
+      const steps = document.getElementById('newCardSteps').value
+        .split('\n').map(s => s.trim()).filter(Boolean);
+
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.disabled = false;
+          document.getElementById('newCardName').value = '';
+          document.getElementById('newCardDesc').value = '';
+          document.getElementById('newCardSteps').value = '';
+          document.getElementById('newProjectForm').style.display = 'none';
+          allCardsCache = res.cards || [];
+          updateProjectBadge();
+          renderProjectCards(allCardsCache);
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          alert(err.message);
+        })
+        .createProjectCard({
+          name: name,
+          tier: document.getElementById('newCardTier').value,
+          phase: 'Active',
+          deadline: 'Ongoing',
+          pacingRule: '15m weekday / 45m weekend chunks',
+          description: document.getElementById('newCardDesc').value.trim(),
+          checklistItems: steps
+        });
+    }
+
+    function submitAutoBuildCard() {
+      const name = document.getElementById('newCardName').value.trim();
+      const desc = document.getElementById('newCardDesc').value.trim();
+      const combined = [name, desc].filter(Boolean).join(': ');
+      if (!combined) return;
+
+      const btn = document.getElementById('btnAutoBuildCard');
+      btn.disabled = true;
+      btn.textContent = 'Generating Steps...';
+
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.disabled = false;
+          btn.textContent = 'Auto-Generate Steps from Description';
+          document.getElementById('newCardName').value = '';
+          document.getElementById('newCardDesc').value = '';
+          document.getElementById('newCardSteps').value = '';
+          document.getElementById('newProjectForm').style.display = 'none';
+          allCardsCache = res.cards || [];
+          updateProjectBadge();
+          renderProjectCards(allCardsCache);
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.textContent = 'Auto-Generate Steps from Description';
+          alert(err.message);
+        })
+        .createProjectFromDescription(combined);
+    }
+
+    function confirmStartOver() {
+      if (!confirm('Archive all active projects? (Saved in your Projects sheet tab.)')) return;
+      google.script.run
+        .withSuccessHandler(cards => {
+          allCardsCache = cards || [];
+          updateProjectBadge();
+          renderProjectCards(allCardsCache);
+        })
+        .archiveAllActiveProjects();
+    }
+
+    function renderProjectCards(cards) {
+      const container = document.getElementById('projectCardsContainer');
+      if (!cards || cards.length === 0) {
+        container.innerHTML = '<div class="card meta-text">No active projects. Click "+ New Project" above to create one with a breakdown description.</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      cards.forEach(card => {
+        const el = document.createElement('div');
+        el.className = 'card';
+
+        const head = document.createElement('div');
+        head.className = 'section-header';
+
+        const titleWrap = document.createElement('div');
+        const pill = document.createElement('span');
+        pill.className = 'cat-pill';
+        pill.textContent = `${card.tier} • ${card.deadline}`;
+
+        const titleEl = document.createElement('div');
+        titleEl.style.fontWeight = '700';
+        titleEl.style.fontSize = '15px';
+        titleEl.style.marginTop = '4px';
+        titleEl.textContent = card.name;
+
+        titleWrap.appendChild(pill);
+        titleWrap.appendChild(titleEl);
+
+        const btns = document.createElement('div');
+        btns.style.display = 'flex';
+        btns.style.gap = '5px';
+
+        const splitBtn = document.createElement('button');
+        splitBtn.className = 'plan-fill mini';
+        splitBtn.textContent = 'Break Down (15m)';
+        splitBtn.onclick = () => {
+          splitBtn.disabled = true;
+          splitBtn.textContent = 'Splitting...';
+          google.script.run
+            .withSuccessHandler(updated => {
+              allCardsCache = updated || [];
+              renderProjectCards(allCardsCache);
+            })
+            .withFailureHandler(err => {
+              splitBtn.disabled = false;
+              splitBtn.textContent = 'Break Down (15m)';
+              alert(err.message);
+            })
+            .breakDownProjectWithAI(card.projectId);
+        };
+
+        const addStepToggle = document.createElement('button');
+        addStepToggle.className = 'secondary mini';
+        addStepToggle.textContent = '+ Step';
+
+        const editToggle = document.createElement('button');
+        editToggle.className = 'secondary mini';
+        editToggle.textContent = 'Edit';
+
+        btns.appendChild(splitBtn);
+        btns.appendChild(addStepToggle);
+        btns.appendChild(editToggle);
+        head.appendChild(titleWrap);
+        head.appendChild(btns);
+        el.appendChild(head);
+
+        // Collapsible Edit & Breakdown Description Drawer
+        const editDrawer = document.createElement('div');
+        editDrawer.style.display = 'none';
+        editDrawer.style.marginBottom = '10px';
+        editDrawer.style.padding = '10px';
+        editDrawer.style.background = '#0d1117';
+        editDrawer.style.borderRadius = '8px';
+        editDrawer.style.border = '1px solid #30363d';
+
+        const nameIn = document.createElement('input');
+        nameIn.type = 'text';
+        nameIn.value = card.name;
+        nameIn.style.marginBottom = '6px';
+
+        const deadIn = document.createElement('input');
+        deadIn.type = 'text';
+        deadIn.value = card.deadline || '';
+        deadIn.placeholder = 'Deadline (e.g., Fridays 3:30 PM)';
+        deadIn.style.marginBottom = '6px';
+
+        const notesIn = document.createElement('textarea');
+        notesIn.rows = 3;
+        notesIn.value = card.notes || '';
+        notesIn.placeholder = 'Description & Breakdown Guide...';
+        notesIn.style.marginBottom = '6px';
+
+        const editActions = document.createElement('div');
+        editActions.className = 'two-col';
+
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'mini';
+        saveBtn.textContent = 'Save Description & Details';
+        saveBtn.onclick = () => {
+          saveBtn.disabled = true;
+          google.script.run
+            .withSuccessHandler(updated => {
+              allCardsCache = updated || [];
+              renderProjectCards(allCardsCache);
+            })
+            .updateProjectMetadata(card.projectId, card.phase, deadIn.value, card.pacingRule, notesIn.value, nameIn.value);
+        };
+
+        const archBtn = document.createElement('button');
+        archBtn.className = 'danger mini';
+        archBtn.textContent = 'Archive Project';
+        archBtn.onclick = () => {
+          archBtn.disabled = true;
+          google.script.run
+            .withSuccessHandler(updated => {
+              allCardsCache = updated || [];
+              updateProjectBadge();
+              renderProjectCards(allCardsCache);
+            })
+            .archiveProjectCard(card.projectId);
+        };
+
+        editActions.appendChild(saveBtn);
+        editActions.appendChild(archBtn);
+        editDrawer.appendChild(nameIn);
+        editDrawer.appendChild(deadIn);
+        editDrawer.appendChild(notesIn);
+        editDrawer.appendChild(editActions);
+        el.appendChild(editDrawer);
+
+        editToggle.onclick = () => {
+          editDrawer.style.display = editDrawer.style.display === 'none' ? 'block' : 'none';
+        };
+
+        // Collapsible + Step Row
+        const addStepRow = document.createElement('div');
+        addStepRow.style.display = 'none';
+        addStepRow.style.gap = '6px';
+        addStepRow.style.marginBottom = '8px';
+
+        const stepIn = document.createElement('input');
+        stepIn.type = 'text';
+        stepIn.placeholder = 'New 15m step...';
+        stepIn.style.padding = '6px 9px';
+        stepIn.style.fontSize = '12.5px';
+
+        const stepSaveBtn = document.createElement('button');
+        stepSaveBtn.className = 'mini';
+        stepSaveBtn.textContent = 'Add';
+
+        const submitStep = () => {
+          const val = stepIn.value.trim();
+          if (!val) return;
+          stepIn.disabled = true;
+          stepSaveBtn.disabled = true;
+          google.script.run
+            .withSuccessHandler(updated => {
+              allCardsCache = updated || [];
+              renderProjectCards(allCardsCache);
+            })
+            .addProjectChecklistItem(card.projectId, val);
+        };
+        stepSaveBtn.onclick = submitStep;
+        stepIn.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); submitStep(); } };
+
+        addStepRow.appendChild(stepIn);
+        addStepRow.appendChild(stepSaveBtn);
+        el.appendChild(addStepRow);
+
+        addStepToggle.onclick = () => {
+          const showing = addStepRow.style.display === 'flex';
+          addStepRow.style.display = showing ? 'none' : 'flex';
+          if (!showing) stepIn.focus();
+        };
+
+        // Clean Checklist Rows with Checkbox + Schedule
+        const listWrap = document.createElement('div');
+        const openItems = (card.checklist || []).filter(i => !i.done);
+
+        if (openItems.length === 0) {
+          listWrap.innerHTML = '<div class="meta-text">No open steps. Click "+ Step" or "Break Down (15m)".</div>';
+        } else {
+          openItems.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'task-row';
+
+            const main = document.createElement('div');
+            main.className = 'task-main';
+
+            const label = document.createElement('label');
+            label.className = 'chk-label';
+
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.onchange = () => {
+              cb.disabled = true;
+              row.style.opacity = '0.45';
+              google.script.run
+                .withSuccessHandler(updated => {
+                  allCardsCache = updated || [];
+                  renderProjectCards(allCardsCache);
+                })
+                .toggleProjectChecklistItem(card.projectId, item.id, true);
+            };
+
+            const txt = document.createElement('span');
+            txt.textContent = item.text;
+            if (item.scheduledSlot) {
+              const sPill = document.createElement('span');
+              sPill.className = 'sched-pill';
+              sPill.textContent = `📅 ${item.scheduledSlot}`;
+              txt.appendChild(sPill);
+            }
+
+            label.appendChild(cb);
+            label.appendChild(txt);
+
+            const schedBtn = document.createElement('button');
+            schedBtn.className = 'secondary xs';
+            schedBtn.textContent = 'Schedule';
+            schedBtn.onclick = () => openInlineScheduler(row, item.text, 15, 'PROJECT_ITEM', card.projectId, item.id);
+
+            main.appendChild(label);
+            main.appendChild(schedBtn);
+            row.appendChild(main);
+            listWrap.appendChild(row);
+          });
+        }
+
+        el.appendChild(listWrap);
+        container.appendChild(el);
+      });
+    }
+
+    /* ================= INBOX TAB (WITH ChiefOfStaff TAG) ================= */
+    function tagAllRemaining() {
+      const listEl = document.getElementById('gmailResultsList');
+      const ids = Array.from(listEl.querySelectorAll('.gmail-item'))
+        .map(el => el.dataset.threadId)
+        .filter(Boolean);
+      if (ids.length === 0) return;
+
+      const btn = document.getElementById('btnTagAll');
+      btn.disabled = true;
+      btn.textContent = 'Tagging...';
+
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.disabled = false;
+          btn.textContent = 'Tag All Handled';
+          btn.style.display = 'none';
+          listEl.innerHTML = '';
+          updateInboxBadge(0);
+          const statusEl = document.getElementById('gmailStatus');
+          statusEl.style.color = '#3fb950';
+          statusEl.textContent = res.message;
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.textContent = 'Tag All Handled';
+          alert(err.message);
+        })
+        .bulkTagGmailThreads(ids);
+    }
+
+    function scanGmail(isBackground) {
+      const btn = document.getElementById('btnScanGmail');
+      const statusEl = document.getElementById('gmailStatus');
+      const listEl = document.getElementById('gmailResultsList');
+      const tagAllBtn = document.getElementById('btnTagAll');
+      const customQuery = document.getElementById('gmailQueryInput').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = 'Scanning...';
+      if (!isBackground) {
+        statusEl.style.color = '#3fb950';
+        statusEl.textContent = 'Scanning untriaged inbox threads...';
+        listEl.innerHTML = '';
+      }
+
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.disabled = false;
+          btn.textContent = 'Rescan Inbox';
+          const items = (res && res.items) || [];
+          updateInboxBadge(items.length);
+
+          if (items.length === 0) {
+            tagAllBtn.style.display = 'none';
+            statusEl.style.color = '#8b949e';
+            statusEl.textContent = res.scanSummary || 'All caught up — no untriaged action emails.';
+            listEl.innerHTML = '';
+            return;
+          }
+
+          tagAllBtn.style.display = 'inline-block';
+          statusEl.style.color = '#3fb950';
+          statusEl.textContent = res.scanSummary;
+          listEl.innerHTML = '';
+
+          items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'gmail-item';
+            card.dataset.threadId = item.threadId;
+
+            const topRow = document.createElement('div');
+            topRow.style.display = 'flex';
+            topRow.style.justifyContent = 'space-between';
+            topRow.style.alignItems = 'center';
+
+            const sender = document.createElement('span');
+            sender.style.fontSize = '12px';
+            sender.style.color = '#79c0ff';
+            sender.style.fontWeight = '600';
+            sender.textContent = `${item.senderShort} • ${item.deadlineHint}`;
+
+            const rightWrap = document.createElement('div');
+            rightWrap.style.display = 'flex';
+            rightWrap.style.gap = '6px';
+            rightWrap.style.alignItems = 'center';
+
+            if (item.permalink) {
+              const link = document.createElement('a');
+              link.href = item.permalink;
+              link.target = '_blank';
+              link.rel = 'noopener';
+              link.textContent = 'Open ↗';
+              link.style.fontSize = '11px';
+              link.style.color = '#8b949e';
+              link.style.textDecoration = 'none';
+              rightWrap.appendChild(link);
+            }
+
+            const urg = document.createElement('span');
+            urg.className = 'cat-pill';
+            urg.style.color = item.urgency === 'HIGH' ? '#ff7b72' : '#8b949e';
+            urg.textContent = item.urgency;
+            rightWrap.appendChild(urg);
+
+            topRow.appendChild(sender);
+            topRow.appendChild(rightWrap);
+
+            const titleInput = document.createElement('input');
+            titleInput.type = 'text';
+            titleInput.value = item.actionTitle;
+            titleInput.style.padding = '6px 8px';
+            titleInput.style.fontSize = '13px';
+
+            const subj = document.createElement('div');
+            subj.className = 'meta-text';
+            subj.textContent = `Re: ${item.subject}`;
+
+            const ctrlRow = document.createElement('div');
+            ctrlRow.style.display = 'flex';
+            ctrlRow.style.gap = '5px';
+            ctrlRow.style.flexWrap = 'wrap';
+            ctrlRow.style.alignItems = 'center';
+
+            const projSelect = document.createElement('select');
+            projSelect.style.padding = '5px 7px';
+            projSelect.style.fontSize = '11.5px';
+            projSelect.style.flex = '1';
+            projSelect.style.minWidth = '130px';
+
+            if (allCardsCache.length === 0) {
+              const opt = document.createElement('option');
+              opt.value = '';
+              opt.textContent = '(No projects)';
+              projSelect.appendChild(opt);
+            } else {
+              allCardsCache.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.projectId;
+                opt.textContent = c.name;
+                if (c.projectId === item.matchedProjectId) opt.selected = true;
+                projSelect.appendChild(opt);
+              });
+            }
+
+            const addProjBtn = document.createElement('button');
+            addProjBtn.className = 'mini';
+            addProjBtn.textContent = '+ Project';
+            addProjBtn.title = 'Add to Project & tag ChiefOfStaff (stays in Gmail inbox, won\'t reappear)';
+            addProjBtn.disabled = allCardsCache.length === 0;
+
+            const runBtn = document.createElement('button');
+            runBtn.className = 'plan-fill mini';
+            runBtn.textContent = '+ Running';
+            runBtn.title = 'Add to Running List & tag ChiefOfStaff (stays in Gmail inbox, won\'t reappear)';
+
+            const handledBtn = document.createElement('button');
+            handledBtn.className = 'secondary mini';
+            handledBtn.textContent = 'Handled';
+            handledBtn.title = 'Tag ChiefOfStaff so it stays in Gmail inbox but never reappears here';
+
+            const archBtn = document.createElement('button');
+            archBtn.className = 'secondary mini';
+            archBtn.textContent = 'Archive';
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'danger mini';
+            delBtn.textContent = 'Delete';
+
+            const setDisabled = s => {
+              addProjBtn.disabled = s || allCardsCache.length === 0;
+              runBtn.disabled = s;
+              handledBtn.disabled = s;
+              archBtn.disabled = s;
+              delBtn.disabled = s;
+            };
+
+            const removeCardAndUpdateBadge = () => {
+              card.remove();
+              const remaining = listEl.querySelectorAll('.gmail-item').length;
+              updateInboxBadge(remaining);
+              if (remaining === 0) tagAllBtn.style.display = 'none';
+            };
+
+            const handleImport = mode => {
+              setDisabled(true);
+              google.script.run
+                .withSuccessHandler(res => {
+                  allCardsCache = res.cards || [];
+                  runningTodosCache = res.runningTodos || [];
+                  updateProjectBadge();
+                  renderRunningTodos(runningTodosCache);
+                  renderProjectCards(allCardsCache);
+                  statusEl.style.color = '#3fb950';
+                  statusEl.textContent = res.message;
+                  removeCardAndUpdateBadge();
+                })
+                .withFailureHandler(err => {
+                  setDisabled(false);
+                  alert(err.message);
+                })
+                .importGmailItem(mode, projSelect.value, titleInput.value, item.suggestedCategory, item.threadId);
+            };
+
+            const handleEmailAction = act => {
+              setDisabled(true);
+              card.style.opacity = '0.45';
+              google.script.run
+                .withSuccessHandler(res => {
+                  statusEl.style.color = '#3fb950';
+                  statusEl.textContent = (res && res.message) || 'Updated email.';
+                  removeCardAndUpdateBadge();
+                })
+                .withFailureHandler(err => {
+                  card.style.opacity = '1';
+                  setDisabled(false);
+                  alert(err.message);
+                })
+                .performGmailThreadAction(item.threadId, act);
+            };
+
+            addProjBtn.onclick = () => handleImport('ADD_TO_PROJECT');
+            runBtn.onclick = () => handleImport('ADD_TO_RUNNING');
+            handledBtn.onclick = () => handleEmailAction('tag');
+            archBtn.onclick = () => handleEmailAction('archive');
+            delBtn.onclick = () => handleEmailAction('trash');
+
+            ctrlRow.appendChild(projSelect);
+            ctrlRow.appendChild(addProjBtn);
+            ctrlRow.appendChild(runBtn);
+            ctrlRow.appendChild(handledBtn);
+            ctrlRow.appendChild(archBtn);
+            ctrlRow.appendChild(delBtn);
+
+            card.appendChild(topRow);
+            card.appendChild(titleInput);
+            card.appendChild(subj);
+            card.appendChild(ctrlRow);
+            listEl.appendChild(card);
+          });
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.textContent = 'Rescan Inbox';
+          statusEl.style.color = '#ff7b72';
+          statusEl.textContent = err.message;
+        })
+        .scanGmailForActionItems(customQuery);
+    }
+
+    /* ================= CALENDAR TAB ================= */
+    function requestSlotSuggestions(dateStr, startTime24, durationMin, slotTitle) {
+      const statusEl = document.getElementById('agendaStatus');
+      statusEl.style.color = '#8b949e';
+      statusEl.textContent = 'Finding options for Plan period...';
+
+      google.script.run
+        .withSuccessHandler(res => {
+          statusEl.textContent = '';
+          const card = document.getElementById('suggestCard');
+          card.style.display = 'block';
+          document.getElementById('suggestWindowLabel').textContent = res.windowLabel;
+          document.getElementById('suggestAdviceText').textContent = res.advice;
+          document.getElementById('suggestCommitStatus').textContent = '';
+
+          const list = document.getElementById('suggestOptionsList');
+          list.innerHTML = '';
+
+          (res.options || []).forEach(opt => {
+            const row = document.createElement('div');
+            row.className = 'agenda-item';
+
+            const info = document.createElement('div');
+            const titleEl = document.createElement('div');
+            titleEl.style.fontWeight = '600';
+            titleEl.textContent = `#${opt.rank}: ${opt.title} (${opt.duration_min}m)`;
+
+            const whyEl = document.createElement('div');
+            whyEl.className = 'meta-text';
+            whyEl.textContent = `${opt.project_tag} • ${opt.why_now}`;
+
+            info.appendChild(titleEl);
+            info.appendChild(whyEl);
+
+            const bookBtn = document.createElement('button');
+            bookBtn.className = 'mini';
+            bookBtn.textContent = 'Approve';
+            bookBtn.onclick = () => {
+              bookBtn.disabled = true;
+              bookBtn.textContent = '...';
+              google.script.run
+                .withSuccessHandler(msg => {
+                  bookBtn.textContent = 'Booked';
+                  document.getElementById('suggestCommitStatus').className = 'status-msg';
+                  document.getElementById('suggestCommitStatus').textContent = msg;
+                  loadAgenda();
+                })
+                .withFailureHandler(err => {
+                  bookBtn.disabled = false;
+                  bookBtn.textContent = 'Approve';
+                  alert(err.message);
+                })
+                .commitScheduledBlocks([{
+                  isProtectedAnchor: false,
+                  writeToCalendar: true,
+                  existingTaskId: null,
+                  projectId: opt.project_id || '',
+                  projectTag: opt.project_tag,
+                  title: opt.title,
+                  tier: opt.tier,
+                  dateStr: res.dateStr,
+                  startTimeStr: res.startTime24,
+                  durationMin: opt.duration_min,
+                  twoMinStart: opt.two_min_start,
+                  stoppingRule: opt.stopping_rule
+                }]);
+            };
+
+            row.appendChild(info);
+            row.appendChild(bookBtn);
+            list.appendChild(row);
+          });
+        })
+        .withFailureHandler(err => {
+          statusEl.style.color = '#ff7b72';
+          statusEl.textContent = err.message;
+        })
+        .suggestForOpenSlot(dateStr, startTime24, durationMin, slotTitle);
+    }
+
+    function loadAgenda() {
+      const statusEl = document.getElementById('agendaStatus');
+      statusEl.style.color = '#8b949e';
+      statusEl.textContent = 'Syncing calendar...';
+
+      google.script.run
+        .withSuccessHandler(events => {
+          statusEl.textContent = '';
+          const container = document.getElementById('agendaList');
+          if (!events || events.length === 0) {
+            container.textContent = 'No calendar events in the next 3 days.';
+            return;
+          }
+          container.innerHTML = '';
+          let lastDay = '';
+
+          events.forEach(ev => {
+            if (ev.dayLabel !== lastDay) {
+              const dayHead = document.createElement('div');
+              dayHead.className = 'agenda-day-header';
+              dayHead.textContent = ev.dayLabel;
+              container.appendChild(dayHead);
+              lastDay = ev.dayLabel;
+            }
+
+            const row = document.createElement('div');
+            row.className = ev.isPast ? 'agenda-item past' : 'agenda-item';
+
+            const info = document.createElement('div');
+            const titleEl = document.createElement('div');
+            titleEl.style.fontWeight = '600';
+            titleEl.style.color = ev.isPlanPeriod ? '#3fb950' : (ev.isFocusBlock ? '#79c0ff' : '#e6edf3');
+            titleEl.textContent = ev.title;
+
+            const metaEl = document.createElement('div');
+            metaEl.className = 'meta-text';
+            metaEl.textContent = `${ev.timeLabel} • ${ev.calendarName}`;
+
+            info.appendChild(titleEl);
+            info.appendChild(metaEl);
+
+            const actions = document.createElement('div');
+            if (ev.isPlanPeriod) {
+              const suggestBtn = document.createElement('button');
+              suggestBtn.className = 'plan-fill mini';
+              suggestBtn.textContent = 'Suggest';
+              suggestBtn.onclick = () => requestSlotSuggestions(ev.dateStr, ev.startTime24, ev.durationMin, ev.title);
+              actions.appendChild(suggestBtn);
+            } else if (ev.isTracked || ev.isFocusBlock) {
+              const tag = document.createElement('span');
+              tag.className = 'cat-pill';
+              tag.style.color = '#3fb950';
+              tag.textContent = ev.linkedStatus || 'Focus';
+              actions.appendChild(tag);
+            }
+
+            row.appendChild(info);
+            row.appendChild(actions);
+            container.appendChild(row);
+          });
+        })
+        .withFailureHandler(err => {
+          statusEl.style.color = '#ff7b72';
+          statusEl.textContent = 'Calendar sync error: ' + err.message;
+        })
+        .getCalendarAgenda(3);
+    }
+  </script>
+</body>
+</html>
